@@ -9,10 +9,12 @@ Consider the following LP:
 
 **Maximize 3x + 4y subject to the following constraints:**
 
-|-------:|:-:|----|
-| x + 2y | ≤ | 14 |
-| 3x - y | ≥ | 0  |
-|  x - y | ≤ | 2  |
+x + 2y ≤ 14
+
+3x - y ≥ 0
+
+x - y ≤ 2
+
 
 The code below demonstrates how to construct and solve this LP using the `simplex` package.
 
