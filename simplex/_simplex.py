@@ -63,10 +63,14 @@ def perform_pivot(tableau, row, col):
         None
     """
     n = tableau.shape[0]
+    s = np.sign(tableau[row, col])
 
-    for r in range(n):
-        if r != row:
-            tableau[r, :] = (tableau[row, col] * tableau[r, :] - tableau[r, col] * tableau[row, :]) / tableau[row, col]
+    tableau[row, :] *= s
+
+    for i in range(n):
+        if i != row:
+            tableau[i, :] = \
+                s * (tableau[row, col] * tableau[i, :] - tableau[i, col] * tableau[row, :]) / tableau[-1, -2]
 
 
 def standardize(constraints, objective):
@@ -97,7 +101,7 @@ def phase_one_pivot_position(tableau):
     Returns:
         (pivot_row, pivot_col)
     """
-    prow = np.argmin(tableau[:, -1].flatten())
+    prow = np.argmin(tableau[:-1, -1].flatten())
     pcol = 0
 
     while tableau[prow, pcol] >= 0:
@@ -150,7 +154,7 @@ def simplex(tableau):
         One of the outcomes contained in `SolutionStatus`.
     """
     # Phase I
-    while tableau[:, -1].min() < 0:
+    while tableau[:-1, -1].min() < 0:
         prow, pcol = phase_one_pivot_position(tableau)
 
         if prow is None:
@@ -159,7 +163,7 @@ def simplex(tableau):
         perform_pivot(tableau, prow, pcol)
 
     # Phase II
-    while tableau[-1, :].min() < 0:
+    while tableau[-1, :-1].min() < 0:
         prow, pcol = phase_two_pivot_position(tableau)
 
         if prow is None:
