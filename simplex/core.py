@@ -35,12 +35,11 @@ class Solver:
         """An iterable containing the solver's variables."""
         return self._vars.keys()
 
-    def add_variable(self, name, lower_bound=0, upper_bound=np.inf):
+    def add_variable(self, name, upper_bound=INFINITY):
         """Adds a variable to the linear program.
 
         Args:
             name: A unique identifier for variable.
-            lower_bound: The variable's lower bound.
             upper_bound: The variable's upper bound.
 
         Returns:
@@ -49,7 +48,7 @@ class Solver:
         Raises:
             ValueError: if a variable with the provided name already exists for this solver
         """
-        var = Variable(name, lower_bound, upper_bound)
+        var = Variable(name, upper_bound)
 
         if var in self._vars:
             raise ValueError(f'this solver already has the variable: {name}')
@@ -101,18 +100,24 @@ class Variable:
 
     Attributes:
         name: The name of the variable.
-        lower_bound: The lower bound for this variable's value.
         upper_bound: The upper bound for this variable's value.
 
     See Also:
         `Solver.add_variable`
     """
 
-    def __init__(self, name, lower_bound=0, upper_bound=Solver.INFINITY):
+    def __init__(self, name, upper_bound=Solver.INFINITY):
         self.name = name
-        self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self._solution_value = None
+
+    def standard_form(self):
+        constraints = []
+
+        if self.upper_bound != Solver.INFINITY:
+            constraints.append(Constraint(0, self.upper_bound, {self: 1}))
+
+        return constraints
 
     @property
     def solution_value(self):
@@ -131,8 +136,8 @@ class Constraint:
     """A constraint in a linear program.
 
     Attributes:
-        lower_bound: The lower bound for this variable's value.
-        upper_bound: The upper bound for this variable's value.
+        lower_bound: The lower bound for this constraint's value.
+        upper_bound: The upper bound for this constraint's value.
         coefficients: Optional. A dictionary mapping from variables to their coefficients for this constraint.
 
     See Also:

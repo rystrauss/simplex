@@ -26,7 +26,7 @@ def get_initial_tableau(variables, constraints, objective):
         objective: The objective of the LP.
 
     Returns:
-        THe linear program's initial tableau.
+        The linear program's initial tableau.
     """
     num_vars = len(variables)
     num_constraints = len(constraints)
@@ -73,10 +73,11 @@ def perform_pivot(tableau, row, col):
                 s * (tableau[row, col] * tableau[i, :] - tableau[i, col] * tableau[row, :]) / tableau[-1, -2]
 
 
-def standardize(constraints, objective):
+def standardize(variables, constraints, objective):
     """Converts the constraints and objective to standard form.
 
     Args:
+        variables: The variables of the LP.
         constraints: The constraints to be converted.
         objective: The objective to be converted.
 
@@ -86,6 +87,9 @@ def standardize(constraints, objective):
     standard_constraints = []
     for c in constraints:
         standard_constraints.extend(c.standard_form())
+
+    for var in variables.keys():
+        standard_constraints.extend(var.standard_form())
 
     standard_objective = objective.standard_form()
 
@@ -189,12 +193,12 @@ def get_results(tableau, variables, objective):
     """
     objective._solution_value = tableau[-1, -1] / tableau[-1, -2]
 
-    for var in variables:
-        i = variables[var]
-        if np.count_nonzero(tableau[:, i]) > 1:
+    for var, i in variables.items():
+        nonzero = np.nonzero(tableau[:, i])[0]
+        if len(nonzero) > 1:
             continue
 
-        j = np.argmax(tableau[:, i])
+        j = nonzero[0]
         var._solution_value = tableau[j, -1] / tableau[j, i]
 
 
@@ -211,7 +215,7 @@ def solve_with_simplex(variables, constraints, objective):
     Returns:
         One of the outcomes contained in `SolutionStatus`.
     """
-    constraints, standard_objective = standardize(constraints, objective)
+    constraints, standard_objective = standardize(variables, constraints, objective)
     tableau = get_initial_tableau(variables, constraints, standard_objective)
     outcome = simplex(tableau)
 
