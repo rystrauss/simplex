@@ -50,7 +50,6 @@ constraint2.set_coefficient(y, -1)
 objective = solver.objective()
 objective.set_coefficient(x, 3)
 objective.set_coefficient(y, 4)
-objective.set_maximization()
 
 # Solve the linear program
 status = solver.solve()
