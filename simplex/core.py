@@ -166,7 +166,7 @@ class Constraint:
     @property
     def coefficients(self):
         """A dictionary mapping from variables to their coefficients for this constraint."""
-        return self._coefficients
+        return copy(self._coefficients)
 
     def set_coefficient(self, variable, value):
         """Sets the coefficient for a given variable in this constraint.
@@ -214,15 +214,14 @@ class Constraint:
 class Objective:
     """The objective of a linear program.
 
+    It is assumed that the objective is to be maximized.
+
     See Also:
         `Solver.objective`
     """
-    MAXIMIZATION: Final[str] = 'max'
-    MINIMIZATION: Final[str] = 'min'
 
     def __init__(self):
         self._coefficients = dict()
-        self._type = None
         self._solution_value = None
 
     @property
@@ -235,18 +234,9 @@ class Objective:
         return self._solution_value
 
     @property
-    def type(self):
-        """The type of this objective function, as either a minimization or maximization problem.
-
-        Will be either `Objective.MINIMIZATION` or `Objective.MAXIMIZATION`, or None if the type has not
-        yet been assigned.
-        """
-        return self._type
-
-    @property
     def coefficients(self):
         """A dictionary mapping from variables to their coefficients for this objective."""
-        return self._coefficients
+        return copy(self._coefficients)
 
     def set_coefficient(self, variable, value):
         """Sets the coefficient for a given variable in this objective.
@@ -265,36 +255,3 @@ class Objective:
             raise TypeError('provided variable is not of the `Variable` type.')
 
         self._coefficients[variable] = value
-
-    def set_maximization(self):
-        """Sets this objective to be maximized.
-
-        Returns:
-            None
-        """
-        self._type = self.MAXIMIZATION
-
-    def set_minimization(self):
-        """Sets this objective to be minimized.
-
-        Returns:
-            None
-        """
-        self._type = self.MINIMIZATION
-
-    def standard_form(self):
-        """Creates the standard form equivalent of this objective.
-
-        Returns:
-            An `Objective` that is equivalent to this one and is in standard form.
-        """
-        new = Objective()
-        new._coefficients = copy(self._coefficients)
-        new._type = self._type
-
-        if new._type == self.MINIMIZATION:
-            new._type = self.MAXIMIZATION
-            for key in new._coefficients.keys():
-                new._coefficients[key] = -new._coefficients[key]
-
-        return new

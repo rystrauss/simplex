@@ -18,6 +18,9 @@ x - y ≤ 2
 
 The code below demonstrates how to construct and solve this LP using the `simplex` package.
 
+For simplicity, this solver assumes that the objective is to be maximized and does not provide the option to set
+explicit lower bounds on variables.
+
 ```python
 from simplex import Solver
 

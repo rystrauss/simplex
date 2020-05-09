@@ -7,6 +7,8 @@ verify_ssl = true
 
 [packages]
 numpy = "*"
+pytest = "*"
+pytest-timeout = "*"
 
 [requires]
 python_version = "3.8"
