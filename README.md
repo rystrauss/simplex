@@ -28,8 +28,8 @@ from simplex import Solver
 solver = Solver()
 
 # Create variables
-x = solver.add_variable('x', 0, Solver.INFINITY)
-y = solver.add_variable('y', 0, Solver.INFINITY)
+x = solver.add_variable('x', Solver.INFINITY)
+y = solver.add_variable('y', Solver.INFINITY)
 
 # Constraint 0: x + 2y <= 14.
 constraint0 = solver.add_constraint(-Solver.INFINITY, 14)
